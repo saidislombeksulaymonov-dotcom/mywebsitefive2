@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For You ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#170c15;
+    --bg-2:#33182b;
+    --bg-3:#4a1f34;
+    --rose:#e8a3b3;
+    --rose-deep:#c96b83;
+    --gold:#d9b877;
+    --text-light:#f8ecec;
+    --text-muted:#cbb0b6;
+  }
+
+  /* ============ EDIT HER NAME HERE ============ */
+  /* Replace the text inside quotes below with her name */
+  /* ============================================= */
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse at 30% 20%, var(--bg-3) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 80%, var(--bg-3) 0%, transparent 50%),
+      linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-1) 100%);
+    font-family:'Poppins', sans-serif;
+    color:var(--text-light);
+  }
+
+  #app{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+
+  /* ---------- Ambient particles ---------- */
+  .particle-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    bottom:-40px;
+    font-size:16px;
+    opacity:0.55;
+    color:var(--rose);
+    animation:floatUp linear infinite;
+    filter:drop-shadow(0 0 4px rgba(232,163,179,0.35));
+    user-select:none;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    8%{ opacity:0.6; }
+    50%{ transform:translateY(-55vh) translateX(20px) rotate(180deg); }
+    92%{ opacity:0.5; }
+    100%{ transform:translateY(-110vh) translateX(-10px) rotate(360deg); opacity:0; }
+  }
+
+  /* ---------- Stage system ---------- */
+  .stage{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:32px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 1s ease;
+    z-index:2;
+  }
+  .stage.active{
+    opacity:1;
+    visibility:visible;
+    z-index:3;
+  }
+
+  /* ---------- Stage 1: Opening ---------- */
+  .eyebrow{
+    letter-spacing:4px;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--gold);
+    opacity:0.85;
+    margin-bottom:18px;
+    animation:fadeIn 1.4s ease both;
+  }
+  .title-main{
+    font-family:'Playfair Display', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(32px, 7vw, 58px);
+    line-height:1.25;
+    animation:fadeIn 1.6s ease both;
+    animation-delay:0.2s;
+  }
+  .title-main .her-name{
+    font-family:'Great Vibes', cursive;
+    font-size:1.5em;
+    font-style:normal;
+    color:var(--rose);
+    padding:0 6px;
+  }
+  .subtitle{
+    margin-top:20px;
+    font-size:15px;
+    color:var(--text-muted);
+    font-weight:300;
+    animation:fadeIn 1.8s ease both;
+    animation-delay:0.5s;
+  }
+  .open-btn{
+    margin-top:48px;
+    animation:fadeIn 2s ease both, gentlePulse 2.4s ease-in-out infinite;
+    animation-delay:0.9s, 1.5s;
+  }
+
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes gentlePulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.04); }
+  }
+
+  .btn{
+    font-family:'Poppins', sans-serif;
+    font-size:14px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    background:transparent;
+    color:var(--text-light);
+    border:1px solid var(--rose);
+    padding:14px 42px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .btn:hover{
+    background:var(--rose);
+    color:var(--bg-1);
+    box-shadow:0 0 24px rgba(232,163,179,0.45);
+  }
+
+  /* ---------- Stage 2: Flower + Apology ---------- */
+  .flower-wrap{
+    position:relative;
+    width:220px;
+    height:220px;
+    margin-bottom:8px;
+  }
+  .sparkle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    background:var(--gold);
+    border-radius:50%;
+    opacity:0;
+    animation:twinkle 2.2s ease-in-out infinite;
+    box-shadow:0 0 8px var(--gold);
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:0; transform:scale(0.4); }
+    50%{ opacity:1; transform:scale(1.1); }
+  }
+
+  .petal-shape{
+    transform-origin:110px 130px;
+    transform:scale(0);
+    animation:bloom 1.1s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes bloom{
+    to{ transform:scale(1); }
+  }
+
+  .apology-text{
+    max-width:560px;
+    margin-top:22px;
+  }
+  .apology-text p{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(16px, 2.6vw, 21px);
+    line-height:1.85;
+    color:var(--text-light);
+    opacity:0;
+    animation:fadeIn 1.4s ease forwards;
+  }
+  .apology-text p:nth-child(1){ animation-delay:0.2s; }
+  .apology-text p:nth-child(2){ animation-delay:1.4s; }
+  .apology-text p:nth-child(3){ animation-delay:2.6s; }
+
+  .continue-btn{
+    margin-top:38px;
+    opacity:0;
+    animation:fadeIn 1.2s ease forwards;
+    animation-delay:4s;
+  }
+
+  /* ---------- Stage 3: Final Question ---------- */
+  .big-heart{
+    font-size:48px;
+    animation:heartbeat 1.6s ease-in-out infinite;
+    margin-bottom:20px;
+    filter:drop-shadow(0 0 18px rgba(232,163,179,0.5));
+  }
+  @keyframes heartbeat{
+    0%,100%{ transform:scale(1); }
+    25%{ transform:scale(1.15); }
+    40%{ transform:scale(1); }
+    55%{ transform:scale(1.1); }
+  }
+  .question-text{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(24px, 5vw, 38px);
+    max-width:600px;
+    line-height:1.4;
+  }
+  .question-buttons{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    height:160px;
+    margin-top:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+  }
+  .btn-yes{
+    background:var(--rose);
+    color:var(--bg-1);
+    border:none;
+    font-weight:500;
+    box-shadow:0 0 20px rgba(232,163,179,0.35);
+  }
+  .btn-yes:hover{
+    box-shadow:0 0 30px rgba(232,163,179,0.6);
+  }
+  .btn-no{
+    position:absolute;
+    transition:top 0.28s ease, left 0.28s ease, transform 0.28s ease;
+  }
+
+  /* ---------- Stage 4: Thank you ---------- */
+  .thankyou-title{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(34px, 8vw, 64px);
+    color:var(--rose);
+    animation:fadeIn 1.2s ease both;
+  }
+  .thankyou-sub{
+    margin-top:18px;
+    color:var(--text-muted);
+    font-size:15px;
+    max-width:420px;
+    animation:fadeIn 1.6s ease both;
+    animation-delay:0.3s;
+  }
+
+  .confetti-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+    overflow:hidden;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:-20px;
+    border-radius:2px;
+    animation:confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    to{ transform:translateY(110vh) rotate(540deg); opacity:0.9; }
+  }
+
+  @media (max-width:480px){
+    .flower-wrap{ width:170px; height:170px; }
+    .question-buttons{ height:190px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="particle-layer" id="particleLayer"></div>
+
+  <!-- STAGE 1: OPENING -->
+  <section class="stage active" id="stage-open">
+    <div class="eyebrow">a little something</div>
+    <h1 class="title-main">For, <span class="her-name" id="nameSlot"> Roziya</span> ❤️</h1>
+    <p class="subtitle">I made something just for you.</p>
+    <button class="btn open-btn" id="openBtn">Open</button>
+  </section>
+
+  <!-- STAGE 2: FLOWER + APOLOGY -->
+  <section class="stage" id="stage-flower">
+    <div class="flower-wrap">
+      <svg viewBox="0 0 220 220" width="220" height="220">
+        <!-- stem -->
+        <path d="M110 140 C 108 175, 108 190, 110 210" stroke="#7a9b76" stroke-width="3" fill="none" opacity="0.8"/>
+        <!-- leaves -->
+        <path class="petal-shape" style="animation-delay:0.9s" d="M110 175 C 90 172, 78 182, 76 198 C 96 200, 110 192, 110 175 Z" fill="#6f9268"/>
+        <path class="petal-shape" style="animation-delay:1.0s" d="M110 185 C 130 182, 142 192, 144 206 C 124 208, 110 200, 110 185 Z" fill="#7fa377"/>
+        <!-- outer petals -->
+        <g>
+          <ellipse class="petal-shape" style="animation-delay:0s"   cx="110" cy="95"  rx="20" ry="34" fill="#c96b83"/>
+          <ellipse class="petal-shape" style="animation-delay:0.08s" cx="140" cy="115" rx="20" ry="34" fill="#c96b83" transform="rotate(60 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.16s" cx="140" cy="150" rx="20" ry="34" fill="#c96b83" transform="rotate(120 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.24s" cx="110" cy="165" rx="20" ry="34" fill="#c96b83" transform="rotate(180 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.32s" cx="80"  cy="150" rx="20" ry="34" fill="#c96b83" transform="rotate(240 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.40s" cx="80"  cy="115" rx="20" ry="34" fill="#c96b83" transform="rotate(300 110 130)"/>
+        </g>
+        <!-- inner petals -->
+        <g>
+          <ellipse class="petal-shape" style="animation-delay:0.55s" cx="110" cy="112" rx="13" ry="22" fill="#e8a3b3"/>
+          <ellipse class="petal-shape" style="animation-delay:0.62s" cx="128" cy="122" rx="13" ry="22" fill="#e8a3b3" transform="rotate(72 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.69s" cx="122" cy="142" rx="13" ry="22" fill="#e8a3b3" transform="rotate(144 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.76s" cx="98"  cy="142" rx="13" ry="22" fill="#e8a3b3" transform="rotate(216 110 130)"/>
+          <ellipse class="petal-shape" style="animation-delay:0.83s" cx="92"  cy="122" rx="13" ry="22" fill="#e8a3b3" transform="rotate(288 110 130)"/>
+        </g>
+        <!-- center -->
+        <circle class="petal-shape" style="animation-delay:0.95s" cx="110" cy="130" r="10" fill="#d9b877"/>
+      </svg>
+      <div class="sparkle" style="top:10%; left:15%; animation-delay:0.2s;"></div>
+      <div class="sparkle" style="top:20%; left:80%; animation-delay:0.8s;"></div>
+      <div class="sparkle" style="top:70%; left:10%; animation-delay:1.3s;"></div>
+      <div class="sparkle" style="top:75%; left:85%; animation-delay:1.7s;"></div>
+      <div class="sparkle" style="top:5%; left:55%; animation-delay:2.1s;"></div>
+    </div>
+
+    <div class="apology-text">
+      <p>I'm truly sorry.</p>
+      <p>Some words are impossible to take back, but they can become the beginning of becoming a better person. If I could rewrite that moment, I would choose kindness, I would choose patience, and I would choose making you smile.</p>
+      <p>I can't change yesterday, but I promise to do better tomorrow. Like flowers bloom after the rain, I hope trust can bloom again after my mistake.</p>
+    </div>
+
+    <button class="btn continue-btn" id="continueBtn">Continue</button>
+  </section>
+
+  <!-- STAGE 3: FINAL QUESTION -->
+  <section class="stage" id="stage-question">
+    <div class="big-heart">❤️</div>
+    <p class="question-text">Will you accept my apology?</p>
+    <div class="question-buttons" id="questionButtons">
+      <button class="btn btn-yes" id="yesBtn">🩷 Yes</button>
+      <button class="btn btn-no" id="noBtn">🤍 No</button>
+    </div>
+  </section>
+
+  <!-- STAGE 4: THANK YOU -->
+  <section class="stage" id="stage-thankyou">
+    <div class="thankyou-title">Thank you.</div>
+    <p class="thankyou-sub">Every day, I'll try to earn it a little more.</p>
+  </section>
+
+  <div class="confetti-layer" id="confettiLayer"></div>
+</div>
+
+<script>
+  /* ========= EDIT HER NAME HERE ========= */
+  const HER_NAME = "Roziya"; // <-- shu yerga uning ismini yozing
+  document.getElementById('nameSlot').textContent = HER_NAME;
+
+  /* ---------- Ambient floating petals ---------- */
+  const particleLayer = document.getElementById('particleLayer');
+  const petalChars = ['❀','✿','❦','♡'];
+  function spawnPetal(){
+    const el = document.createElement('div');
+    el.className = 'petal';
+    el.textContent = petalChars[Math.floor(Math.random()*petalChars.length)];
+    const left = Math.random()*100;
+    const duration = 9 + Math.random()*8;
+    const size = 12 + Math.random()*14;
+    el.style.left = left + 'vw';
+    el.style.fontSize = size + 'px';
+    el.style.animationDuration = duration + 's';
+    particleLayer.appendChild(el);
+    setTimeout(()=> el.remove(), duration*1000 + 500);
+  }
+  for(let i=0;i<10;i++){ setTimeout(spawnPetal, i*700); }
+  setInterval(spawnPetal, 900);
+
+  /* ---------- Stage navigation ---------- */
+  function goTo(id){
+    document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.getElementById('openBtn').addEventListener('click', () => goTo('stage-flower'));
+  document.getElementById('continueBtn').addEventListener('click', () => goTo('stage-question'));
+
+  /* ---------- Dodging "No" button ---------- */
+  const noBtn = document.getElementById('noBtn');
+  const questionButtons = document.getElementById('questionButtons');
+
+  function dodge(){
+    const containerRect = questionButtons.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const maxLeft = Math.max(0, containerRect.width - btnRect.width);
+    const maxTop = Math.max(0, containerRect.height - btnRect.height);
+    const newLeft = Math.random() * maxLeft;
+    const newTop = Math.random() * maxTop;
+    noBtn.style.left = newLeft + 'px';
+    noBtn.style.top = newTop + 'px';
+  }
+
+  // desktop: dodge on hover
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('pointermove', dodge);
+
+  // mobile: dodge on touchstart before tap registers
+  noBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    dodge();
+  }, { passive:false });
+
+  /* ---------- Yes -> confetti + thank you ---------- */
+  const confettiLayer = document.getElementById('confettiLayer');
+  const confettiColors = ['#e8a3b3','#d9b877','#f8ecec','#c96b83','#a3d9c9'];
+
+  function launchConfetti(){
+    for(let i=0;i<80;i++){
+      setTimeout(() => {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        const size = 6 + Math.random()*8;
+        piece.style.width = size + 'px';
+        piece.style.height = (size*0.4) + 'px';
+        piece.style.left = Math.random()*100 + 'vw';
+        piece.style.background = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+        piece.style.animationDuration = (2.6 + Math.random()*1.8) + 's';
+        piece.style.transform = `rotate(${Math.random()*360}deg)`;
+        confettiLayer.appendChild(piece);
+        setTimeout(()=> piece.remove(), 5000);
+      }, i*30);
+    }
+  }
+
+  document.getElementById('yesBtn').addEventListener('click', () => {
+    goTo('stage-thankyou');
+    launchConfetti();
+    setTimeout(launchConfetti, 900);
+  });
+</script>
+</body>
+</html>
